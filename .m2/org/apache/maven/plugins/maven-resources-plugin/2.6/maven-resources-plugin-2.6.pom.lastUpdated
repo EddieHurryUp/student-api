@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Wed Feb 04 14:57:46 CST 2026
+@default-gifshow-http\://nexus.corp.kuaishou.com\:88/nexus/content/groups/public/.lastUpdated=1770188266946
+http\://nexus.corp.kuaishou.com\:88/nexus/content/groups/public/.error=Could not transfer artifact org.apache.maven.plugins\:maven-resources-plugin\:pom\:2.6 from/to gifshow (http\://nexus.corp.kuaishou.com\:88/nexus/content/groups/public)\: transfer failed for http\://nexus.corp.kuaishou.com\:88/nexus/content/groups/public/org/apache/maven/plugins/maven-resources-plugin/2.6/maven-resources-plugin-2.6.pom

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>学生管理</title>
+  <style>
+    :root {
+      --bg: #f7f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #2563eb;
+      --border: #e5e7eb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "PingFang SC", "Hiragino Sans GB", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .wrap {
+      max-width: 900px;
+      margin: 32px auto;
+      padding: 0 16px;
+    }
+    h1 { margin: 0 0 16px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; }
+    input {
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      min-width: 160px;
+    }
+    button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 8px;
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+    }
+    button.secondary { background: #374151; }
+    button.danger { background: #dc2626; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .muted { color: var(--muted); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>学生管理（最简前端）</h1>
+
+    <div class="card">
+      <div class="row">
+        <input id="addName" placeholder="姓名" />
+        <input id="addScore" placeholder="分数" type="number" />
+        <button onclick="addStudent()">新增</button>
+        <button class="secondary" onclick="loadStudents()">刷新列表</button>
+        <button class="danger" onclick="clearAll()">清空</button>
+      </div>
+      <p class="muted">提示：姓名非唯一，可能会影响多条记录。</p>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <input id="updName" placeholder="要更新的姓名" />
+        <input id="updScore" placeholder="新分数" type="number" />
+        <button onclick="updateScore()">更新分数</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <input id="delName" placeholder="要删除的姓名" />
+        <button class="danger" onclick="deleteByName()">删除</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>姓名</th>
+            <th>分数</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    async function loadStudents() {
+      const res = await fetch('/students');
+      const data = await res.json();
+      const tbody = document.getElementById('tbody');
+      tbody.innerHTML = '';
+      data.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${s.id}</td><td>${s.name}</td><td>${s.score}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function addStudent() {
+      const name = document.getElementById('addName').value.trim();
+      const score = Number(document.getElementById('addScore').value);
+      if (!name || Number.isNaN(score)) return alert('请输入姓名和分数');
+      await fetch('/students', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, score })
+      });
+      await loadStudents();
+    }
+
+    async function updateScore() {
+      const name = document.getElementById('updName').value.trim();
+      const score = Number(document.getElementById('updScore').value);
+      if (!name || Number.isNaN(score)) return alert('请输入姓名和新分数');
+      await fetch(`/students/${encodeURIComponent(name)}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ score })
+      });
+      await loadStudents();
+    }
+
+    async function deleteByName() {
+      const name = document.getElementById('delName').value.trim();
+      if (!name) return alert('请输入姓名');
+      await fetch(`/students/${encodeURIComponent(name)}`, { method: 'DELETE' });
+      await loadStudents();
+    }
+
+    async function clearAll() {
+      await fetch('/students', { method: 'DELETE' });
+      await loadStudents();
+    }
+
+    loadStudents();
+  </script>
+</body>
+</html>
