@@ -21,7 +21,7 @@ public class StudentDao {
     public void ensureTable() {
         jdbcTemplate.execute(
                 "CREATE TABLE IF NOT EXISTS student (" +
-                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "id BIGSERIAL PRIMARY KEY," +
                         "name TEXT NOT NULL," +
                         "score INTEGER NOT NULL" +
                         ")"
